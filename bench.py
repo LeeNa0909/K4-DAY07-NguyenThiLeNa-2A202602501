@@ -4,9 +4,13 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from src.agent import KnowledgeBaseAgent
+from src.embeddings import MockEmbedder
 from src.models import Document
-from src.chunking import RecursiveChunker, SentenceChunker, FixedSizeChunker
+from src.chunking import RecursiveChunker
 from src.store import EmbeddingStore
+from src.retrieval import rerank
+
+mock_embedder = MockEmbedder()
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -28,31 +32,43 @@ def parse_markdown_file(filepath: Path) -> tuple[dict, str]:
     return {}, raw.strip()
 
 
+def local_extract_fn(prompt: str) -> str:
+    """Quote the two best chunks so multi-part answers keep their evidence."""
+    context = prompt.split("Context:\n", 1)[1].split("\n\nQuestion:", 1)[0]
+    chunks = [re.sub(r"^\[\d+\] ", "", part).strip() for part in re.split(r"\n\n(?=\[\d+\] )", context)]
+    if not chunks or chunks == ["(no relevant documents)"]:
+        return "Không có đoạn trích để trả lời."
+    excerpts = "\n".join(f"[{index}] {chunk}" for index, chunk in enumerate(chunks[:2], start=1))
+    return f"Các đoạn trích sau xếp hạng từ khóa (cần tự đối chiếu):\n{excerpts}"
+
+
 def make_llm_fn():
-    """Configure the answer model without putting an API key in source code."""
+    """Use a real API when configured, otherwise a labeled local extractive function."""
     load_dotenv()
     provider = os.getenv("BENCH_LLM_PROVIDER", "").strip().lower()
     model = os.getenv("BENCH_LLM_MODEL", "").strip()
-    if not provider:
-        return None
-    if not model:
-        raise ValueError("Set BENCH_LLM_MODEL in .env before running the Agent benchmark.")
+    if provider in ("", "local"):
+        return local_extract_fn
 
     if provider == "openai":
         if not os.getenv("OPENAI_API_KEY"):
-            raise ValueError("Set OPENAI_API_KEY in .env.")
+            return local_extract_fn
+        if not model:
+            raise ValueError("Set BENCH_LLM_MODEL in .env before running the Agent benchmark.")
         from openai import OpenAI
         client = OpenAI()
         return lambda prompt: client.responses.create(model=model, input=prompt).output_text
 
     if provider == "gemini":
         if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
-            raise ValueError("Set GEMINI_API_KEY in .env.")
+            return local_extract_fn
+        if not model:
+            raise ValueError("Set BENCH_LLM_MODEL in .env before running the Agent benchmark.")
         from google import genai
         client = genai.Client(api_key=os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
         return lambda prompt: client.models.generate_content(model=model, contents=prompt).text or ""
 
-    raise ValueError("BENCH_LLM_PROVIDER must be 'openai' or 'gemini'.")
+    raise ValueError("BENCH_LLM_PROVIDER must be 'local', 'openai', or 'gemini'.")
 
 
 def run_benchmark():
@@ -76,9 +92,9 @@ def run_benchmark():
             )
             all_documents.append(doc_chunk)
 
-    store = EmbeddingStore(collection_name="lazada_benchmark")
+    store = EmbeddingStore(collection_name="lazada_benchmark", embedding_fn=mock_embedder)
     store.add_documents(all_documents)
-    agent = KnowledgeBaseAgent(store, llm_fn) if llm_fn else None
+    agent = KnowledgeBaseAgent(store, llm_fn)
 
     benchmark_queries = [
         {
@@ -112,6 +128,9 @@ def run_benchmark():
     output_lines.append(f"=== KẾT QUẢ BENCHMARK RAG - CHỦ ĐỀ LAZADA ===")
     output_lines.append(f"Tổng số tài liệu nạp vào: {len(md_files)}")
     output_lines.append(f"Tổng số chunks lưu trong store: {store.get_collection_size()}\n")
+    output_lines.append("Xếp hạng: BM25 từ/cụm từ; MockEmbedder dùng khi điểm gần bằng nhau")
+    output_lines.append("Chế độ Agent: trích dẫn top-2, không dùng LLM/API" if llm_fn is local_extract_fn else "Chế độ Agent: LLM qua API")
+    output_lines.append("")
 
     for item in benchmark_queries:
         qid = item["id"]
@@ -121,22 +140,20 @@ def run_benchmark():
         output_lines.append(f"--- Query {qid}: '{qtext}' ---")
         if qfilter:
             output_lines.append(f"-> Áp dụng Filter: {qfilter}")
-            results = store.search_with_filter(qtext, top_k=3, metadata_filter=qfilter)
+            candidates = store.search_with_filter(qtext, top_k=store.get_collection_size(), metadata_filter=qfilter)
         else:
             output_lines.append("-> Không dùng Filter (Search tất cả)")
-            results = store.search(qtext, top_k=3)
+            candidates = store.search(qtext, top_k=store.get_collection_size())
+        results = rerank(qtext, candidates, top_k=3)
 
         for rank, res in enumerate(results, start=1):
             doc_id = res.get("metadata", {}).get("doc_id", res.get("id"))
             score = res.get("score", 0.0)
             snippet = " ".join(res.get("content", "").split())
-            output_lines.append(f"  [Top {rank}] Doc: {doc_id} | Score: {score:.4f}")
+            output_lines.append(f"  [Top {rank}] Doc: {doc_id} | Score BM25: {score:.4f} | Score băm: {res['hash_score']:.4f}")
             output_lines.append(f"        Chunk: {snippet}")
-        if agent:
-            answer = agent.answer_from_results(qtext, results)
-            output_lines.append(f"  Agent answer: {answer}")
-        else:
-            output_lines.append("  Agent answer: Chưa chạy (cần BENCH_LLM_PROVIDER và BENCH_LLM_MODEL).")
+        answer = agent.answer_from_results(qtext, results)
+        output_lines.append(f"  Agent answer: {answer}")
         output_lines.append("")
 
     report_text = "\n".join(output_lines)
