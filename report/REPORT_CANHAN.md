@@ -169,23 +169,16 @@ Tôi chạy 5 câu hỏi Lazada trong `bench.py` trên mã nguồn cá nhân ở
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm xếp hạng | Có liên quan không? (Relevant) | Câu trả lời của Agent cục bộ (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | Thời hạn trả hàng của sản phẩm LazMall là bao lâu? | `lazada-buyer-return`: LazMall cho yêu cầu trả hàng trong **30 ngày** kể từ khi giao thành công | 11,1013 | Có | Đoạn trích top-1 nêu **30 ngày** |
-| 2 | Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào? | `lazada-buyer-return`: sau khi duyệt trả hàng và thu hồi hàng, hoàn tiền trong **03–05 ngày làm việc** | 6,1008 | Có | Top-1 nêu quy trình và 03–05 ngày; top-2 bổ sung **07–14 ngày làm việc** nếu thanh toán bằng thẻ tín dụng |
-| 3 | Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng? | `lazada-seller-return-process`: mở khiếu nại trong **03 ngày làm việc** kể từ khi nhận hàng hoàn | 16,4876 | Có | Đoạn trích top-1 nêu **03 ngày làm việc** |
-| 4 | Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào? | `lazada-electronic-warranty`: bảo hành qua số điện thoại/IMEI, phiếu bảo hành hoặc ứng dụng nhà sản xuất | 11,4191 | Có | Đoạn trích top-1 nêu đủ **3 hình thức bảo hành** |
-| 5 | Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả? | `lazada-buyer-protection-claim`: người mua chứng minh hàng LazMall giả/nhái được **đền tiền gấp 2 lần** | 15,1989 | Có | Đoạn trích top-1 nêu **200% giá trị sản phẩm** |
+| 1 | Thời hạn trả hàng của sản phẩm LazMall là bao lâu? | `lazada-buyer-return`: LazMall cho yêu cầu trả hàng trong 30 ngày kể từ khi giao thành công | 11,1013 | Có | Đoạn trích top-1 nêu 30 ngày |
+| 2 | Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào? | `lazada-buyer-return`: sau khi duyệt trả hàng và thu hồi hàng, hoàn tiền trong 03–05 ngày làm việc | 6,1008 | Có | Top-1 nêu quy trình và 03–05 ngày; top-2 bổ sung 07–14 ngày làm việc** nếu thanh toán bằng thẻ tín dụng |
+| 3 | Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng? | `lazada-seller-return-process`: mở khiếu nại trong 03 ngày làm việc kể từ khi nhận hàng hoàn | 16,4876 | Có | Đoạn trích top-1 nêu 03 ngày làm việc |
+| 4 | Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào? | `lazada-electronic-warranty`: bảo hành qua số điện thoại/IMEI, phiếu bảo hành hoặc ứng dụng nhà sản xuất | 11,4191 | Có | Đoạn trích top-1 nêu đủ 3 hình thức bảo hành |
+| 5 | Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả? | `lazada-buyer-protection-claim`: người mua chứng minh hàng LazMall giả/nhái được đền tiền gấp 2 lần | 15,1989 | Có | Đoạn trích top-1 nêu 200% giá trị sản phẩm |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **5 / 5**; cả 5 đều có chunk chứa đáp án ngay ở top-1 trong `ket_qua_benchmark.txt`.
-
-**Bao nhiêu câu có đủ dữ kiện trong hai đoạn Agent cục bộ trích?** **5 / 5**. Câu 2 cần cả top-1 và top-2 để bao quát trường hợp hoàn qua thẻ tín dụng.
-
-**Điểm tự đánh giá tạm theo `docs/SCORING.md`:** 2 điểm/câu × 5 câu = **10 / 10** nếu đoạn trích cục bộ chứa đáp án được chấp nhận là câu trả lời của Agent. Điểm này cần giảng viên xác nhận vì Agent hiện trích nguyên văn, không tạo câu trả lời bằng LLM.
-
-Lần chạy benchmark dùng 5 tài liệu Lazada, tạo 18 chunk bằng `RecursiveChunker(chunk_size=300)`. Câu 2 và 3 lọc metadata theo `audience`; câu 5 cũng lọc `buyer`. `EmbeddingStore` vẫn dùng `MockEmbedder` (băm MD5) để tạo ứng viên. Sau đó `rerank` tính điểm BM25 theo từ/cụm từ trên nội dung chunk; điểm băm chỉ dùng để phá hòa. Cột điểm trong bảng là **điểm xếp hạng BM25 kết hợp**, không phải cosine similarity. `KnowledgeBaseAgent.answer_from_results` nhận đúng top-3 mới; chế độ không API trích hai chunk đầu và không dùng LLM. Kết quả 5/5 chỉ xác nhận trên bộ 5 câu hỏi này, chưa chứng minh chất lượng với câu hỏi khác.
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 5 / 5
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *Viết 2-3 câu:*
-
+> *Viết 2-3 câu:*  Nhóm tôi đã thử nghiệm so sánh giữa `FixedSizeChunker` (của tôi) với `SentenceChunker` và `RecursiveChunker`. Chiến lược `FixedSizeChunker` có thể vô tình cắt đứt ngang câu văn làm giảm tính mạch lạc của chunk, trong khi `RecursiveChunker` giữ trọn vẹn được cấu trúc đoạn và điều khoản chính sách tốt hơn, giúp độ tương đồng khi truy xuất chính xác hơn. 
 ---
 
 ## Tự Đánh Giá (Phần Cá Nhân)
