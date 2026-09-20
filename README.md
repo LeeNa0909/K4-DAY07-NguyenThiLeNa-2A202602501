@@ -112,6 +112,15 @@ export GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 - Có thể cấu hình qua file `.env` mà không cần chạy lệnh `source .env`
 - File kịch bản `main.py` chạy từ đầu đến cuối và nhập (import) các API công khai từ gói `src`
 
+### Chạy benchmark Lazada không cần API key (PowerShell)
+
+```powershell
+.\.venv\Scripts\python.exe bench.py
+Get-Content -LiteralPath 'ket_qua_benchmark.txt' -Encoding utf8
+```
+
+`bench.py` truyền `MockEmbedder` cho `EmbeddingStore` để lấy ứng viên bằng vector tạo từ hàm băm MD5, rồi xếp hạng lại bằng BM25 theo từ/cụm từ trong `src/retrieval.py`. Điểm băm chỉ dùng khi điểm từ khóa gần bằng nhau; bản thân điểm băm không đo được sự gần nhau về ngữ nghĩa. Với `BENCH_LLM_PROVIDER=local` (hoặc không đặt provider), benchmark gọi `KnowledgeBaseAgent` với hàm trích dẫn cục bộ, không cần API key hay SDK của nhà cung cấp. Cột `Agent answer` chép top-2 sau xếp hạng lại, **không phải câu trả lời do LLM tạo**; cần đối chiếu từng câu trước khi chấm điểm. `main.py` có `demo_llm` để minh họa cách ghép prompt, nhưng hàm đó chỉ in bản xem trước prompt. Muốn Agent tạo câu trả lời bằng LLM, cần API key và thư viện tương ứng.
+
 ### Lệnh xác minh nhanh (verify)
 
 Sau khi cài đặt các thư viện tùy chọn, bạn có thể kiểm tra từng backend riêng:
