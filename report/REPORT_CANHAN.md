@@ -169,13 +169,15 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Thời hạn trả hàng của sản phẩm LazMall là bao lâu? | `lazada-buyer-return`: thời gian hoàn tiền qua thẻ tín dụng 07–14 ngày làm việc | 0,1818 | Không — nói về hoàn tiền, không phải thời hạn trả hàng | Chưa chạy Agent |
+| 2 | Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào? | `lazada-buyer-protection-claim`: cam kết hàng chính hãng LazMall | 0,1062 | Không ở top-1; chunk liên quan ở top-2 và top-3 (`lazada-buyer-return`) | Chưa chạy Agent |
+| 3 | Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng? | `lazada-seller-return-process`: thời hạn khiếu nại hàng hoàn hư hỏng là 03 ngày làm việc | 0,1690 | Có | Chưa chạy Agent |
+| 4 | Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào? | `lazada-seller-fee-and-claim`: biểu phí cố định và phí thanh toán của nhà bán hàng | 0,1345 | Không; top-3 không có chunk về hình thức bảo hành | Chưa chạy Agent |
+| 5 | Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả? | `lazada-buyer-return`: các trường hợp sản phẩm lỗi kỹ thuật hoặc hư hỏng | 0,2458 | Không; top-3 không có chunk về đền bù hàng giả | Chưa chạy Agent |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 2 / 5 (câu 2 và 3, dựa trên các đoạn trích trong `ket_qua_benchmark.txt`).
+
+Lần chạy benchmark dùng 5 tài liệu Lazada, tạo 18 chunk bằng `RecursiveChunker(chunk_size=300)`. Câu 2 và 3 có lọc metadata theo `audience`; câu 5 cũng lọc `buyer`. Điểm Score là cosine similarity do `MockEmbedder` tạo ra, nên điểm cao không bảo đảm chunk đúng nghĩa. Benchmark mới kiểm tra truy xuất, chưa gọi Agent để tạo câu trả lời; vì vậy chưa thể chấm điểm đầy đủ theo tiêu chí vừa truy xuất đúng vừa trả lời đúng.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > *Viết 2-3 câu:*
@@ -190,5 +192,5 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | Chờ đánh giá / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | Chưa có kết quả / 10 |
+| Kết quả truy xuất của tôi (Competition Results) | Đã ghi nhận truy xuất 2/5; chưa chấm điểm Agent / 10 |
 | **Tổng phần cá nhân** | **Chưa xác định / 60** |
