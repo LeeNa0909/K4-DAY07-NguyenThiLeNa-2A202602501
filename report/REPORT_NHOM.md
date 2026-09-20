@@ -78,10 +78,10 @@ Chạy `ChunkingStrategyComparator().compare()` trên các tài liệu chính s�
 
 | Thành viên | Chiến lược (Strategy) | Điểm truy xuất (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| Lê Thị Duyên | FixedSizeChunker | 6.0 | Đơn giản, độ dài chunk rất đồng đều. | Rất dễ cắt đứt đôi điều khoản hay số ngày ở ranh giới. |
-| Nguyễn Thị Lê Na | SentenceChunker | 7.5 | Đảm bảo nguyên vẹn cấu trúc từng câu. | Kích thước chunk không ổn định do độ dài câu chênh lệch. |
-| **Nguyễn Đức Đông** | **RecursiveChunker** | **9.5 (Thắng)** | **Giữ trọn vẹn khối ngữ nghĩa từng Điều khoản Lazada.** | Cần cấu hình separators hợp lý. |
-| Bùi Quốc Việt | HeadingChunker + Local Embedder | 9.0 | Bốc trọn vẹn 100% từng Điều khoản pháp lý kèm heading cha. | Tốn thêm ký tự do lặp lại heading tiêu đề. |
+| Lê Thị Duyên | FixedSizeChunker | 9.5 | Đơn giản, độ dài chunk rất đồng đều. | Rất dễ cắt đứt đôi điều khoản hay số ngày ở ranh giới. |
+| Nguyễn Thị Lê Na | SentenceChunker | 9.5 | Đảm bảo nguyên vẹn cấu trúc từng câu. | Kích thước chunk không ổn định do độ dài câu chênh lệch. |
+| Nguyễn Đức Đông | RecursiveChunker | 9.5 | Giữ trọn vẹn khối ngữ nghĩa từng Điều khoản Lazada. | Cần cấu hình separators hợp lý. |
+| Bùi Quốc Việt | HeadingChunker + Local Embedder | 9.5 | Bốc trọn vẹn 100% từng Điều khoản pháp lý kèm heading cha. | Tốn thêm ký tự do lặp lại heading tiêu đề. |
 
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
