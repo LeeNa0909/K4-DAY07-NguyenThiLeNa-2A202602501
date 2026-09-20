@@ -165,19 +165,23 @@ Các điểm dưới đây được tính bằng `MockEmbedder` mặc định; m
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
+Tôi chạy 5 câu hỏi Lazada trong `bench.py` trên mã nguồn cá nhân ở gói `src`. Benchmark nạp 5 tài liệu, tạo 18 chunk và ghi chi tiết top-3 cùng câu trả lời trích dẫn vào `ket_qua_benchmark.txt`. Các câu hỏi này cần được đối chiếu với bộ câu hỏi chung của nhóm khi hoàn thiện `REPORT_NHOM.md`.
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
+| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm xếp hạng | Có liên quan không? (Relevant) | Câu trả lời của Agent cục bộ (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | Thời hạn trả hàng của sản phẩm LazMall là bao lâu? | `lazada-buyer-return`: thời gian hoàn tiền qua thẻ tín dụng 07–14 ngày làm việc | 0,1818 | Không — nói về hoàn tiền, không phải thời hạn trả hàng | Chưa chạy Agent |
-| 2 | Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào? | `lazada-buyer-protection-claim`: cam kết hàng chính hãng LazMall | 0,1062 | Không ở top-1; chunk liên quan ở top-2 và top-3 (`lazada-buyer-return`) | Chưa chạy Agent |
-| 3 | Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng? | `lazada-seller-return-process`: thời hạn khiếu nại hàng hoàn hư hỏng là 03 ngày làm việc | 0,1690 | Có | Chưa chạy Agent |
-| 4 | Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào? | `lazada-seller-fee-and-claim`: biểu phí cố định và phí thanh toán của nhà bán hàng | 0,1345 | Không; top-3 không có chunk về hình thức bảo hành | Chưa chạy Agent |
-| 5 | Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả? | `lazada-buyer-return`: các trường hợp sản phẩm lỗi kỹ thuật hoặc hư hỏng | 0,2458 | Không; top-3 không có chunk về đền bù hàng giả | Chưa chạy Agent |
+| 1 | Thời hạn trả hàng của sản phẩm LazMall là bao lâu? | `lazada-buyer-return`: LazMall cho yêu cầu trả hàng trong **30 ngày** kể từ khi giao thành công | 11,1013 | Có | Đoạn trích top-1 nêu **30 ngày** |
+| 2 | Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào? | `lazada-buyer-return`: sau khi duyệt trả hàng và thu hồi hàng, hoàn tiền trong **03–05 ngày làm việc** | 6,1008 | Có | Top-1 nêu quy trình và 03–05 ngày; top-2 bổ sung **07–14 ngày làm việc** nếu thanh toán bằng thẻ tín dụng |
+| 3 | Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng? | `lazada-seller-return-process`: mở khiếu nại trong **03 ngày làm việc** kể từ khi nhận hàng hoàn | 16,4876 | Có | Đoạn trích top-1 nêu **03 ngày làm việc** |
+| 4 | Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào? | `lazada-electronic-warranty`: bảo hành qua số điện thoại/IMEI, phiếu bảo hành hoặc ứng dụng nhà sản xuất | 11,4191 | Có | Đoạn trích top-1 nêu đủ **3 hình thức bảo hành** |
+| 5 | Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả? | `lazada-buyer-protection-claim`: người mua chứng minh hàng LazMall giả/nhái được **đền tiền gấp 2 lần** | 15,1989 | Có | Đoạn trích top-1 nêu **200% giá trị sản phẩm** |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 2 / 5 (câu 2 và 3, dựa trên các đoạn trích trong `ket_qua_benchmark.txt`).
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **5 / 5**; cả 5 đều có chunk chứa đáp án ngay ở top-1 trong `ket_qua_benchmark.txt`.
 
-Lần chạy benchmark dùng 5 tài liệu Lazada, tạo 18 chunk bằng `RecursiveChunker(chunk_size=300)`. Câu 2 và 3 có lọc metadata theo `audience`; câu 5 cũng lọc `buyer`. Điểm Score là cosine similarity do `MockEmbedder` tạo ra, nên điểm cao không bảo đảm chunk đúng nghĩa. Benchmark mới kiểm tra truy xuất, chưa gọi Agent để tạo câu trả lời; vì vậy chưa thể chấm điểm đầy đủ theo tiêu chí vừa truy xuất đúng vừa trả lời đúng.
+**Bao nhiêu câu có đủ dữ kiện trong hai đoạn Agent cục bộ trích?** **5 / 5**. Câu 2 cần cả top-1 và top-2 để bao quát trường hợp hoàn qua thẻ tín dụng.
+
+**Điểm tự đánh giá tạm theo `docs/SCORING.md`:** 2 điểm/câu × 5 câu = **10 / 10** nếu đoạn trích cục bộ chứa đáp án được chấp nhận là câu trả lời của Agent. Điểm này cần giảng viên xác nhận vì Agent hiện trích nguyên văn, không tạo câu trả lời bằng LLM.
+
+Lần chạy benchmark dùng 5 tài liệu Lazada, tạo 18 chunk bằng `RecursiveChunker(chunk_size=300)`. Câu 2 và 3 lọc metadata theo `audience`; câu 5 cũng lọc `buyer`. `EmbeddingStore` vẫn dùng `MockEmbedder` (băm MD5) để tạo ứng viên. Sau đó `rerank` tính điểm BM25 theo từ/cụm từ trên nội dung chunk; điểm băm chỉ dùng để phá hòa. Cột điểm trong bảng là **điểm xếp hạng BM25 kết hợp**, không phải cosine similarity. `KnowledgeBaseAgent.answer_from_results` nhận đúng top-3 mới; chế độ không API trích hai chunk đầu và không dùng LLM. Kết quả 5/5 chỉ xác nhận trên bộ 5 câu hỏi này, chưa chứng minh chất lượng với câu hỏi khác.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > *Viết 2-3 câu:*
@@ -192,5 +196,5 @@ Lần chạy benchmark dùng 5 tài liệu Lazada, tạo 18 chunk bằng `Recurs
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | Chờ đánh giá / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | Đã ghi nhận truy xuất 2/5; chưa chấm điểm Agent / 10 |
-| **Tổng phần cá nhân** | **Chưa xác định / 60** |
+| Kết quả truy xuất của tôi (Competition Results) | Tự đánh giá tạm 10 / 10 (top-3 liên quan 5/5; Agent cục bộ trích đủ dữ kiện 5/5) |
+| **Tổng phần cá nhân** | **55 + điểm dự đoán độ tương tự (chờ đánh giá) / 60** |
