@@ -1,0 +1,48 @@
+=== KẾT QUẢ BENCHMARK RAG - CHỦ ĐỀ LAZADA ===
+Tổng số tài liệu nạp vào: 5
+Tổng số chunks lưu trong store: 18
+
+--- Query 1: 'Thời hạn trả hàng của sản phẩm LazMall là bao lâu?' ---
+-> Không dùng Filter (Search tất cả)
+  [Top 1] Doc: lazada-buyer-return | Score: 0.1818
+        Chunk: 2. Đối với thanh toán qua thẻ tín dụng, thời gian hoàn tiền phụ thuộc vào ngân hàng phát hành (từ **07 - 14 ngày làm việc**).
+  [Top 2] Doc: lazada-buyer-return | Score: 0.1394
+        Chunk: ## Điều 2: Quy trình Hoàn tiền 1. Sau khi yêu cầu trả hàng được phê duyệt và đơn vị vận chuyển thu hồi hàng thành công, Lazada sẽ tiến hành hoàn tiền vào Ví LazadaPay hoặc tài khoản ngân hàng trong vòng **03 - 05 ngày làm việc**.
+  [Top 3] Doc: lazada-seller-return-process | Score: 0.1185
+        Chunk: 2. Nếu kiện hàng hoàn bị thất lạc do đơn vị vận chuyển, Lazada sẽ bồi thường **100% giá trị bán lẻ** của sản phẩm (trừ đi các khoản phí dịch vụ sàn) cho Nhà Bán Hàng.
+
+--- Query 2: 'Thời gian và quy trình xử lý hoàn tiền cho người mua như thế nào?' ---
+-> Áp dụng Filter: {'audience': 'buyer'}
+  [Top 1] Doc: lazada-buyer-protection-claim | Score: 0.1062
+        Chunk: ## Điều 1: Cam kết Hàng Chính hãng 100% trên LazMall 1. Lazada cam kết 100% các sản phẩm được gắn nhãn LazMall là hàng chính hãng. 2. Nếu Người Mua phát hiện và chứng minh được sản phẩm LazMall mua là hàng giả/hàng nhái, Lazada áp dụng chính sách **Đền tiền gấp 2 lần** (200% giá trị sản phẩm).
+  [Top 2] Doc: lazada-buyer-return | Score: 0.0989
+        Chunk: ## Điều 2: Quy trình Hoàn tiền 1. Sau khi yêu cầu trả hàng được phê duyệt và đơn vị vận chuyển thu hồi hàng thành công, Lazada sẽ tiến hành hoàn tiền vào Ví LazadaPay hoặc tài khoản ngân hàng trong vòng **03 - 05 ngày làm việc**.
+  [Top 3] Doc: lazada-buyer-return | Score: 0.0237
+        Chunk: 2. Đối với thanh toán qua thẻ tín dụng, thời gian hoàn tiền phụ thuộc vào ngân hàng phát hành (từ **07 - 14 ngày làm việc**).
+
+--- Query 3: 'Nhà bán hàng có bao nhiêu ngày để mở khiếu nại khi nhận hàng hoàn bị hư hỏng?' ---
+-> Áp dụng Filter: {'audience': 'seller'}
+  [Top 1] Doc: lazada-seller-return-process | Score: 0.1690
+        Chunk: ## Điều 2: Thời hạn Khiếu nại Hàng Hoàn bị Thất lạc hoặc Hư hỏng 1. Nhà Bán Hàng có thời hạn **03 ngày làm việc** kể từ khi nhận lại hàng hoàn để mở khiếu nại trên Trung tâm Hỗ trợ Nhà Bán Hàng (PSC) nếu hàng hoàn bị biến dạng hoặc tráo đổi.
+  [Top 2] Doc: lazada-seller-return-process | Score: -0.0022
+        Chunk: 2. Nếu kiện hàng hoàn bị thất lạc do đơn vị vận chuyển, Lazada sẽ bồi thường **100% giá trị bán lẻ** của sản phẩm (trừ đi các khoản phí dịch vụ sàn) cho Nhà Bán Hàng.
+  [Top 3] Doc: lazada-seller-return-process | Score: -0.0156
+        Chunk: ## Điều 1: Trách nhiệm Nhận hàng Hoàn của Nhà Bán Hàng 1. Đối với các đơn hàng người mua trả lại, đơn vị vận chuyển của Lazada sẽ giao trả hàng về địa chỉ kho của Nhà Bán Hàng trong vòng **07 - 10 ngày làm việc**.
+
+--- Query 4: 'Sản phẩm điện tử mua trên Lazada có các hình thức bảo hành nào?' ---
+-> Không dùng Filter (Search tất cả)
+  [Top 1] Doc: lazada-seller-fee-and-claim | Score: 0.1345
+        Chunk: ## Điều 1: Biểu phí Cố định và Phí Thanh toán 1. Nhà Bán Hàng thông thường chịu Phí Thanh toán cố định **3.973%** (đã bao gồm VAT) trên tổng giá trị thanh toán của đơn hàng thành công. 2. Gian hàng LazMall áp dụng Phí Cố định từ **2% - 8%** tùy thuộc vào ngành hàng đăng ký kinh doanh.
+  [Top 2] Doc: lazada-seller-return-process | Score: 0.1126
+        Chunk: 2. Nếu kiện hàng hoàn bị thất lạc do đơn vị vận chuyển, Lazada sẽ bồi thường **100% giá trị bán lẻ** của sản phẩm (trừ đi các khoản phí dịch vụ sàn) cho Nhà Bán Hàng.
+  [Top 3] Doc: lazada-seller-fee-and-claim | Score: 0.1060
+        Chunk: 2. Lazada sẽ tự động hoàn tiền bồi thường cho Nhà Bán Hàng vào chu kỳ thanh toán tiếp theo mà Nhà Bán Hàng không cần phải gửi yêu cầu khiếu nại thủ công.
+
+--- Query 5: 'Chính sách đền bù của Lazada khi sản phẩm LazMall bị phát hiện là hàng giả?' ---
+-> Áp dụng Filter: {'audience': 'buyer'}
+  [Top 1] Doc: lazada-buyer-return | Score: 0.2458
+        Chunk: - Sản phẩm bị lỗi kỹ thuật, hỏng hóc do nhà sản xuất. - Sản phẩm bị móp méo, hư hỏng trong quá trình vận chuyển. - Giao sai sản phẩm, thiếu phụ kiện, sai kích thước hoặc màu sắc. - Sản phẩm hết hạn sử dụng hoặc nghi ngờ là hàng giả, hàng nhái.
+  [Top 2] Doc: lazada-buyer-return | Score: 0.1076
+        Chunk: ## Điều 2: Quy trình Hoàn tiền 1. Sau khi yêu cầu trả hàng được phê duyệt và đơn vị vận chuyển thu hồi hàng thành công, Lazada sẽ tiến hành hoàn tiền vào Ví LazadaPay hoặc tài khoản ngân hàng trong vòng **03 - 05 ngày làm việc**.
+  [Top 3] Doc: lazada-buyer-return | Score: 0.0993
+        Chunk: ## Điều 1: Điều kiện và Thời hạn Trả hàng 1. Người mua trên gian hàng LazMall có quyền yêu cầu trả hàng và hoàn tiền trong vòng **30 ngày** kể từ ngày giao hàng thành công. 2. Sản phẩm không thuộc danh mục LazMall được áp dụng thời hạn trả hàng chuẩn là **07 ngày**. 3. Điều kiện chấp nhận trả hàng:
