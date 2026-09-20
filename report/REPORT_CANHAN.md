@@ -91,8 +91,7 @@ Vượt qua bộ kiểm thử là điều kiện tính điểm phần này.
 ### Kết Quả Kiểm Thử (Test Results)
 
 ```
-# Dán kết quả (output) của: pytest tests/ -v
-```
+pytest tests/ -v
 platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- F:\AI THỰC CHIẾN\LABS\K4-DAY07-NguyenThiLeNa-2A202602501\.venv\Scripts\python.exe
 cachedir: .pytest_cache
 rootdir: F:\AI THỰC CHIẾN\LABS\K4-DAY07-NguyenThiLeNa-2A202602501
@@ -140,6 +139,8 @@ tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_returns_at_most
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_collection_size PASSED                                           [ 95%]
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc PASSED                                 [ 97%]
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc PASSED                                     [100%]
+============================= 42 passed ==============================
+```
  
 **Số lượng bài test vượt qua (pass):** 42 / 42
 
@@ -147,7 +148,7 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
+Các điểm dưới đây được tính bằng `MockEmbedder` mặc định; mô hình này dùng hàm băm nên điểm không đại diện đáng tin cậy cho sự gần nhau về ngữ nghĩa.
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
@@ -188,6 +189,6 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 | Khởi động (Warm-up) | 5 / 5 |
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
-| Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | 10 / 10 |
-| **Tổng phần cá nhân** | ** 60 / 60** |
+| Dự đoán độ tương tự (Similarity Predictions) | Chờ đánh giá / 5 |
+| Kết quả truy xuất của tôi (Competition Results) | Chưa có kết quả / 10 |
+| **Tổng phần cá nhân** | **Chưa xác định / 60** |
