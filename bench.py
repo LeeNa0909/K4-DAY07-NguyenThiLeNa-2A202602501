@@ -97,9 +97,9 @@ def run_benchmark():
         for rank, res in enumerate(results, start=1):
             doc_id = res.get("metadata", {}).get("doc_id", res.get("id"))
             score = res.get("score", 0.0)
-            snippet = res.get("content", "").replace("\n", " ")[:120]
+            snippet = " ".join(res.get("content", "").split())
             output_lines.append(f"  [Top {rank}] Doc: {doc_id} | Score: {score:.4f}")
-            output_lines.append(f"        Snippet: {snippet}...")
+            output_lines.append(f"        Chunk: {snippet}")
         output_lines.append("")
 
     report_text = "\n".join(output_lines)
