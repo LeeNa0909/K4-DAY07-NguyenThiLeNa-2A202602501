@@ -1,6 +1,9 @@
 import re
 import sys
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+from src.agent import KnowledgeBaseAgent
 from src.models import Document
 from src.chunking import RecursiveChunker, SentenceChunker, FixedSizeChunker
 from src.store import EmbeddingStore
@@ -25,7 +28,35 @@ def parse_markdown_file(filepath: Path) -> tuple[dict, str]:
     return {}, raw.strip()
 
 
+def make_llm_fn():
+    """Configure the answer model without putting an API key in source code."""
+    load_dotenv()
+    provider = os.getenv("BENCH_LLM_PROVIDER", "").strip().lower()
+    model = os.getenv("BENCH_LLM_MODEL", "").strip()
+    if not provider:
+        return None
+    if not model:
+        raise ValueError("Set BENCH_LLM_MODEL in .env before running the Agent benchmark.")
+
+    if provider == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            raise ValueError("Set OPENAI_API_KEY in .env.")
+        from openai import OpenAI
+        client = OpenAI()
+        return lambda prompt: client.responses.create(model=model, input=prompt).output_text
+
+    if provider == "gemini":
+        if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
+            raise ValueError("Set GEMINI_API_KEY in .env.")
+        from google import genai
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
+        return lambda prompt: client.models.generate_content(model=model, contents=prompt).text or ""
+
+    raise ValueError("BENCH_LLM_PROVIDER must be 'openai' or 'gemini'.")
+
+
 def run_benchmark():
+    llm_fn = make_llm_fn()
     data_dir = Path("data/lazada")
     md_files = sorted(data_dir.glob("*.md"))
     
@@ -47,6 +78,7 @@ def run_benchmark():
 
     store = EmbeddingStore(collection_name="lazada_benchmark")
     store.add_documents(all_documents)
+    agent = KnowledgeBaseAgent(store, llm_fn) if llm_fn else None
 
     benchmark_queries = [
         {
@@ -100,6 +132,11 @@ def run_benchmark():
             snippet = " ".join(res.get("content", "").split())
             output_lines.append(f"  [Top {rank}] Doc: {doc_id} | Score: {score:.4f}")
             output_lines.append(f"        Chunk: {snippet}")
+        if agent:
+            answer = agent.answer_from_results(qtext, results)
+            output_lines.append(f"  Agent answer: {answer}")
+        else:
+            output_lines.append("  Agent answer: Chưa chạy (cần BENCH_LLM_PROVIDER và BENCH_LLM_MODEL).")
         output_lines.append("")
 
     report_text = "\n".join(output_lines)
