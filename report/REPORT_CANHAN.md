@@ -1,8 +1,8 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
-**Họ tên:** [Tên sinh viên]
-**Nhóm:** [Tên nhóm]
-**Ngày:** [Ngày nộp]
+**Họ tên:** Nguyễn Thị Lê Na
+**Nhóm:** Nhomtoi
+**Ngày:** 20/09/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -15,20 +15,20 @@
 ### Độ tương tự Cosine (Cosine Similarity) (Bài tập 1.1)
 
 **Độ tương tự cosine cao (High cosine similarity) nghĩa là gì?**
-> *Viết 1-2 câu:*
+> *Viết 1-2 câu:* Độ tương tự cosine cao nghĩa là góc giữa hai vector nhở, chúng có hướng gần nhau. Nếu hai vector là embedding của văn bản, điểm cao thưởng cho thấy chúng có nội dung hoặc ngữ nghĩa gần nhau.
 
 **Ví dụ có độ tương tự CAO:**
-- Câu A:
-- Câu B:
-- Tại sao tương đồng:
+- Câu A: Người mua có thể yêu cầu đổi trả nếu sản phẩm còn nguyên tem/nhãn và chưa qua sử dụng.
+- Câu B: Sản phẩm chưa sử dụng và còn nguyên tem/nhãn là điều kiện để người mua yêu cầu đổi trả.
+- Tại sao tương đồng: Hai câu diễn đạt cùng một điều kiện đổi trả, chỉ khác cách sắp xếp từ.
 
 **Ví dụ có độ tương tự THẤP:**
-- Câu A:
-- Câu B:
-- Tại sao khác:
+- Câu A: Người mua có thể yêu cầu đổi trả nếu sản phẩm còn nguyên tem/nhãn và chưa qua sử dụng.
+- Câu B: Người bán có thể bị xử phạt nếu từ chối yêu cầu bảo hành hợp lệ hoặc phản hồi trễ hạn.
+- Tại sao khác: Câu A nói về điều kiện đổi trả của người mua; câu B nói về trách nhiệm bảo hành của người bán.
 
 **Tại sao độ tương tự cosine (cosine similarity) được ưu tiên hơn khoảng cách Euclid (Euclidean distance) cho text embeddings?**
-> *Viết 1-2 câu:*
+> *Viết 1-2 câu:* Cosine similarity đo độ gần nhau về hướng của hai vector, nên ít bị ảnh hưởng bởi độ lớn vector hơn khoảng cách Euclid. Với text embeddings, hướng vector thường được dùng để so sánh mức độ gần nhau về ý nghĩa; nếu các vector đã được chuẩn hóa về độ dài 1, thứ tự xếp hạng theo cosine và Euclid là tương đương.
 
 ### Bài toán tính toán Chunking (Bài tập 1.2)
 
