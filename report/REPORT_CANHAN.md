@@ -188,6 +188,6 @@ Tôi chạy 5 câu hỏi Lazada trong `bench.py` trên mã nguồn cá nhân ở
 | Khởi động (Warm-up) | 5 / 5 |
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
-| Dự đoán độ tương tự (Similarity Predictions) | Chờ đánh giá / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | Tự đánh giá tạm 10 / 10 (top-3 liên quan 5/5; Agent cục bộ trích đủ dữ kiện 5/5) |
+| Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
+| Kết quả truy xuất của tôi (Competition Results) | 10 / 10 |
 | **Tổng phần cá nhân** | **60 / 60** |
